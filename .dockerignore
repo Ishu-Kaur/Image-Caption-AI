@@ -1,0 +1,12 @@
+# Ignore the virtual environment and Git files
+venv/
+.git/
+.gitignore
+
+# Ignore Docker and cache files
+Dockerfile
+__pycache__/
+*.pyc
+
+# Ignore helper folders not needed for the app to run
+demo_images/
