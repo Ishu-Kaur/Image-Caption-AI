@@ -1,0 +1,17 @@
+# Python virtual environment
+venv/
+
+# Python cache files
+*.pyc
+__pycache__/
+
+# User-uploaded content (we want the folder, but not its contents in the repo)
+static/uploads/*
+!static/uploads/.gitkeep
+
+# OS-specific files (good practice)
+.DS_Store
+Thumbs.db
+
+# Helper folders not needed for the final app to run
+demo_images/
