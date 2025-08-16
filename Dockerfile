@@ -5,7 +5,6 @@ FROM python:3.11-slim
 WORKDIR /app
 
 # Copy the requirements file first to leverage Docker's caching mechanism.
-# This layer will only be rebuilt if requirements.txt changes.
 COPY requirements.txt .
 
 # Install the Python dependencies
@@ -17,6 +16,6 @@ COPY . .
 # Expose the port that Gunicorn will run on
 EXPOSE 8000
 
-# The command to run your application using a production-ready server
-# 0.0.0.0 is crucial to allow connections from outside the container
-CMD ["gunicorn", "--workers=2", "--bind", "0.0.0.0:8000", "app:app"]
+# --- THIS IS THE CORRECTED LINE ---
+# We change the number of workers from 2 to 1 to reduce memory usage.
+CMD ["gunicorn", "--workers=1", "--bind", "0.0.0.0:8000", "app:app"]
