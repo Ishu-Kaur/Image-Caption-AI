@@ -48,7 +48,14 @@ print("Models loaded successfully.")
 
 # --- Flask App Setup ---
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = 'static/uploads/'
+
+# --- THIS IS THE CORRECTED LINE FOR DEPLOYMENT ---
+# It uses the environment variable set by Render for the disk,
+# but falls back to 'static/uploads/' for local development.
+UPLOAD_FOLDER = os.environ.get('FLASK_APP_UPLOAD_FOLDER', 'static/uploads/')
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+# --- END OF CHANGE ---
+
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 # --- Prediction Function ---
@@ -109,8 +116,8 @@ def index():
 
     return render_template('index.html', result=None)
 
-# --- Run the App ---
+# Run the App 
 if __name__ == '__main__':
     print("--- Starting Flask Server ---")
-    # Using host='0.0.0.0' makes it accessible on your local network
+    # This part is ignored by Gunicorn in production but used for local testing
     app.run(host='0.0.0.0', port=5000, debug=False)
