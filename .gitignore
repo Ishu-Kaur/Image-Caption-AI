@@ -13,5 +13,9 @@ static/uploads/*
 .DS_Store
 Thumbs.db
 
+# Model and vocabulary files (will be downloaded by build.sh)
+*.pth
+*.pkl
+
 # Helper folders not needed for the final app to run
 demo_images/

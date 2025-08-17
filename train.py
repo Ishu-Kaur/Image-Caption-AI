@@ -1,3 +1,9 @@
+"""
+This is the final and definitive training script for the custom model.
+It includes the advanced Attention architecture and adds two professional
+techniques: Gradient Clipping and a Learning Rate Scheduler, to ensure
+the most stable and effective training process possible.
+"""
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -12,8 +18,14 @@ from tqdm import tqdm
 import nltk
 
 from model import EncoderCNN, DecoderRNN
-# --- THIS IS THE NEW, CORRECTED IMPORT ---
-from vocabulary import Vocabulary
+
+class Vocabulary:
+    def __init__(self, freq_threshold):
+        self.itos = {0: "<PAD>", 1: "<START>", 2: "<END>", 3: "<UNK>"}
+        self.stoi = {"<PAD>": 0, "<START>": 1, "<END>": 2, "<UNK>": 3}
+        self.freq_threshold = freq_threshold
+    def __len__(self):
+        return len(self.itos)
 
 class Flickr8kDataset(Dataset):
     def __init__(self, dataset, vocab, transform=None):
@@ -75,8 +87,8 @@ def train():
     hidden_size = 256
     vocab_size = len(vocab)
     encoder_dim = 2048
-    num_epochs = 20
-    learning_rate = 1e-3
+    num_epochs = 20 # Let's give it a solid number of epochs to learn properly
+    learning_rate = 1e-3 # We can start with a slightly higher learning rate now
 
     encoder = EncoderCNN(embed_size).to(device)
     decoder = DecoderRNN(embed_size, hidden_size, vocab_size, encoder_dim).to(device)
@@ -84,6 +96,8 @@ def train():
     criterion = nn.CrossEntropyLoss(ignore_index=pad_idx)
     optimizer = optim.Adam(decoder.parameters(), lr=learning_rate)
 
+    # --- NEW: LEARNING RATE SCHEDULER ---
+    # This will decrease the learning rate by a factor of 10 every 7 epochs.
     scheduler = StepLR(optimizer, step_size=7, gamma=0.1)
 
     print("--- Starting Final Training Loop with Gradient Clipping & LR Scheduling ---")
@@ -102,13 +116,17 @@ def train():
             optimizer.zero_grad()
             loss.backward()
             
+            # --- NEW: GRADIENT CLIPPING ---
+            # This clips the gradients to prevent them from exploding.
             torch.nn.utils.clip_grad_norm_(decoder.parameters(), max_norm=0.5)
             
             optimizer.step()
             
-            loop..set_description(f"Epoch [{epoch+1}/{num_epochs}]")
+            loop.set_description(f"Epoch [{epoch+1}/{num_epochs}]")
             loop.set_postfix(loss=loss.item())
         
+        # --- NEW: STEP THE SCHEDULER ---
+        # At the end of each epoch, we step the scheduler.
         scheduler.step()
         print(f"End of Epoch {epoch+1}, current learning rate: {scheduler.get_last_lr()}")
             
@@ -118,4 +136,4 @@ def train():
     print("--- Models saved successfully. ---")
 
 if __name__ == '__main__':
-    train()
+    train() 

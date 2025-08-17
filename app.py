@@ -9,7 +9,7 @@ from werkzeug.utils import secure_filename
 # Import your model classes
 from model import EncoderCNN, DecoderRNN
 # We also need the Vocabulary class definition to load the vocab.pkl file
-from vocabulary import Vocabulary
+from train import Vocabulary
 
 # --- Configuration and Model Loading ---
 device = torch.device("cpu") # Run on CPU
@@ -37,25 +37,17 @@ encoder_dim = 2048
 print("--- Loading Trained Models ---")
 # Encoder
 encoder = EncoderCNN(embed_size).to(device)
-encoder.load_state_dict(torch.load("encoder-model.pth", map_location=device))
-encoder.eval() # Set to evaluation mode
+encoder.load_state_dict(torch.load("encoder-model.pth", map_location=device, weights_only=False)) # <-- ADDED HERE
+encoder.eval()
 
 # Decoder
 decoder = DecoderRNN(embed_size, hidden_size, vocab_size, encoder_dim).to(device)
-decoder.load_state_dict(torch.load("decoder-model.pth", map_location=device))
-decoder.eval() # Set to evaluation mode
-print("Models loaded successfully.")
+decoder.load_state_dict(torch.load("decoder-model.pth", map_location=device, weights_only=False)) # <-- AND ADDED HERE
+decoder.eval()
 
 # --- Flask App Setup ---
 app = Flask(__name__)
-
-# --- THIS IS THE CORRECTED LINE FOR DEPLOYMENT ---
-# It uses the environment variable set by Render for the disk,
-# but falls back to 'static/uploads/' for local development.
-UPLOAD_FOLDER = os.environ.get('FLASK_APP_UPLOAD_FOLDER', 'static/uploads/')
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-# --- END OF CHANGE ---
-
+app.config['UPLOAD_FOLDER'] = 'static/uploads/'
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 # --- Prediction Function ---
@@ -116,8 +108,8 @@ def index():
 
     return render_template('index.html', result=None)
 
-# Run the App 
+# --- Run the App ---
 if __name__ == '__main__':
     print("--- Starting Flask Server ---")
-    # This part is ignored by Gunicorn in production but used for local testing
+    # Using host='0.0.0.0' makes it accessible on your local network
     app.run(host='0.0.0.0', port=5000, debug=False)
