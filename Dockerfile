@@ -16,6 +16,5 @@ COPY . .
 # Expose the port that Gunicorn will run on
 EXPOSE 8000
 
-# --- THIS IS THE CORRECTED LINE ---
-# We change the number of workers from 2 to 1 to reduce memory usage.
-CMD ["gunicorn", "--workers=1", "--bind", "0.0.0.0:8000", "app:app"]
+# We now use the full path to the gunicorn executable to avoid PATH issues
+CMD ["/usr/local/bin/gunicorn", "--workers=1", "--bind", "0.0.0.0:8000", "app:app"]
