@@ -14,18 +14,13 @@ from torchvision import transforms
 from PIL import Image
 from datasets import load_dataset
 import pickle
+from vocabulary import Vocabulary
 from tqdm import tqdm
 import nltk
 
 from model import EncoderCNN, DecoderRNN
 
-class Vocabulary:
-    def __init__(self, freq_threshold):
-        self.itos = {0: "<PAD>", 1: "<START>", 2: "<END>", 3: "<UNK>"}
-        self.stoi = {"<PAD>": 0, "<START>": 1, "<END>": 2, "<UNK>": 3}
-        self.freq_threshold = freq_threshold
-    def __len__(self):
-        return len(self.itos)
+
 
 class Flickr8kDataset(Dataset):
     def __init__(self, dataset, vocab, transform=None):

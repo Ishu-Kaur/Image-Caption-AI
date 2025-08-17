@@ -3,6 +3,7 @@ import pickle
 from collections import Counter
 from datasets import load_dataset
 from tqdm import tqdm
+from vocabulary import Vocabulary
 
 # This class will handle the word-to-index and index-to-word mappings
 class Vocabulary:

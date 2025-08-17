@@ -9,7 +9,7 @@ from werkzeug.utils import secure_filename
 # Import your model classes
 from model import EncoderCNN, DecoderRNN
 # We also need the Vocabulary class definition to load the vocab.pkl file
-from train import Vocabulary
+from vocabulary import Vocabulary
 
 # --- Configuration and Model Loading ---
 device = torch.device("cpu") # Run on CPU
