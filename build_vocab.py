@@ -59,7 +59,7 @@ if __name__ == "__main__":
     # Download the NLTK tokenizer model (only needs to be done once)
     try:
         nltk.data.find('tokenizers/punkt')
-    except nltk.downloader.DownloadError:
+    except LookupError: # <-- This is a more robust way to check
         print("Downloading NLTK 'punkt' model...")
         nltk.download('punkt')
 
