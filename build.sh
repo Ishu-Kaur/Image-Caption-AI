@@ -4,7 +4,10 @@ set -e
 # Install all the python packages
 echo "--- Installing dependencies ---"
 pip install -r requirements.txt
-pip install -r nltk.txt -d /opt/render/project/src/nltk_data # <-- ADD THIS LINE
+
+# Download NLTK data to a specific directory
+echo "--- Downloading NLTK data ---"
+python -m nltk.downloader -d /opt/render/project/src/nltk_data punkt
 
 # Download ONLY the large model files from the GitHub Release
 echo "--- Downloading model files ---"
