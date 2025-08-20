@@ -56,13 +56,6 @@ class Vocabulary:
 if __name__ == "__main__":
     print("Starting vocabulary creation process...")
     
-    # Download the NLTK tokenizer model (only needs to be done once)
-    try:
-        nltk.data.find('tokenizers/punkt')
-    except LookupError: # <-- This is a more robust way to check
-        print("Downloading NLTK 'punkt' model...")
-        nltk.download('punkt')
-
     # Load the Flickr8k training data from Hugging Face
     print("Loading Flickr8k dataset from Hugging Face...")
     train_dataset = load_dataset("jxie/flickr8k", split="train")
