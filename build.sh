@@ -5,11 +5,11 @@ set -e
 echo "--- Installing dependencies ---"
 pip install -r requirements.txt
 
-# Download NLTK data to a specific directory
+# Download NLTK data to a local 'nltk_data' folder in the project root
 echo "--- Downloading NLTK data ---"
-python -m nltk.downloader -d /opt/render/project/src/nltk_data punkt
+python -m nltk.downloader -d nltk_data punkt
 
-# Download ONLY the large model files from the GitHub Release
+# Download the large model files from the GitHub Release
 echo "--- Downloading model files ---"
 wget -O decoder-model.pth "https://github.com/Ishu-Kaur/Image-Caption-AI/releases/download/v1.0.1/decoder-model.pth"
 wget -O encoder-model.pth "https://github.com/Ishu-Kaur/Image-Caption-AI/releases/download/v1.0.1/encoder-model.pth"
