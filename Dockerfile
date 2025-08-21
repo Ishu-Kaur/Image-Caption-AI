@@ -3,9 +3,9 @@ FROM debian:bullseye-slim AS downloader
 RUN apt-get update && apt-get install -y wget && rm -rf /var/lib/apt/lists/*
 WORKDIR /models
 # Make sure to use your latest GitHub release links here
-RUN wget -O decoder-model.pth "YOUR_DECODER_MODEL_LINK"
-RUN wget -O encoder-model.pth "YOUR_ENCODER_MODEL_LINK"
-RUN wget -O vocab.pkl "YOUR_VOCAB_PKL_LINK"
+RUN wget -O decoder-model.pth "https://github.com/Ishu-Kaur/Image-Caption-AI/releases/download/v2.0.2/decoder-model.pth"
+RUN wget -O encoder-model.pth "https://github.com/Ishu-Kaur/Image-Caption-AI/releases/download/v2.0.2/encoder-model.pth"
+RUN wget -O vocab.pkl "https://github.com/Ishu-Kaur/Image-Caption-AI/releases/download/v2.0.2/vocab.pkl"
 
 
 # Stage 2: Final Application
