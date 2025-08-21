@@ -1,4 +1,3 @@
-# Stage 1: Downloader
 FROM debian:bullseye-slim AS downloader
 RUN apt-get update && apt-get install -y wget && rm -rf /var/lib/apt/lists/*
 WORKDIR /models
@@ -14,14 +13,18 @@ WORKDIR /app
 ENV TORCH_HOME=/app/cache
 
 # Copy the downloaded model files from the 'downloader' stage
-COPY --from=downloader /models/ /app/ # <-- THIS LINE IS NOW CORRECT
+COPY --from=downloader /models/ /app/
 
 # Copy and install requirements
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of the application code
-COPY . .
+# Copy ONLY the necessary application code
+COPY app.py .
+COPY model.py .
+COPY vocabulary.py .
+COPY templates/ ./templates/
+COPY static/ ./static/
 
 # Expose the correct port
 EXPOSE 5000
