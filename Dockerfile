@@ -18,7 +18,7 @@ WORKDIR /app
 ENV TORCH_HOME=/app/cache
 
 # Copy the downloaded model files from the 'downloader' stage
-COPY --from-downloader /models/ .
+COPY --from=downloader /models/ .  # <-- THIS LINE IS NOW CORRECT
 
 # Copy and install requirements
 COPY requirements.txt .
