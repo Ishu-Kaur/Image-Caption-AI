@@ -1,32 +1,34 @@
 # Stage 1: Downloader
-# This stage uses a basic image with 'wget' to download our large model files.
 FROM debian:bullseye-slim AS downloader
 RUN apt-get update && apt-get install -y wget && rm -rf /var/lib/apt/lists/*
-WORKDIR /downloads
-RUN wget -O decoder-model.pth "https://github.com/Ishu-Kaur/Image-Caption-AI/releases/download/v2.0.2/decoder-model.pth"
-RUN wget -O encoder-model.pth "https://github.com/Ishu-Kaur/Image-Caption-AI/releases/download/v2.0.2/encoder-model.pth"
-RUN wget -O vocab.pkl "https://github.com/Ishu-Kaur/Image-Caption-AI/releases/download/v2.0.2/vocab.pkl"
+WORKDIR /models
+# Make sure to use your latest GitHub release links here
+RUN wget -O decoder-model.pth "YOUR_DECODER_MODEL_LINK"
+RUN wget -O encoder-model.pth "YOUR_ENCODER_MODEL_LINK"
+RUN wget -O vocab.pkl "YOUR_VOCAB_PKL_LINK"
 
 
 # Stage 2: Final Application
-# This is your actual application image.
-FROM python:3.9-slim
+# Use the Python version that matches your local environment
+FROM python:3.11-slim
 
 WORKDIR /app
 
-# Copy the requirements file and install dependencies
+# Set the home directory for PyTorch cache to prevent permission errors
+ENV TORCH_HOME=/app/cache
+
+# Copy the downloaded model files from the 'downloader' stage
+COPY --from-downloader /models/ .
+
+# Copy and install requirements
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the downloaded model files from the 'downloader' stage
-COPY --from=downloader /downloads/ .
-
-# Copy the rest of your application code
+# Copy the rest of the application code
 COPY . .
 
-# Expose the port your app runs on
+# Expose the correct port
 EXPOSE 5000
 
-# The command to run the application
-# Note: We match the port in the README.md (5000)
+# Run the application
 CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
