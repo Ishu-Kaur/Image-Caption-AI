@@ -1,20 +1,32 @@
-# Use an official lightweight Python image as a base
-FROM python:3.11-slim
+# Stage 1: Downloader
+# This stage uses a basic image with 'wget' to download our large model files.
+FROM debian:buster-slim AS downloader
+RUN apt-get update && apt-get install -y wget && rm -rf /var/lib/apt/lists/*
+WORKDIR /downloads
+RUN wget -O decoder-model.pth "https://github.com/Ishu-Kaur/Image-Caption-AI/releases/download/v2.0.2/decoder-model.pth"
+RUN wget -O encoder-model.pth "https://github.com/Ishu-Kaur/Image-Caption-AI/releases/download/v2.0.2/encoder-model.pth"
+RUN wget -O vocab.pkl "https://github.com/Ishu-Kaur/Image-Caption-AI/releases/download/v2.0.2/vocab.pkl"
 
-# Set a working directory inside the container
+
+# Stage 2: Final Application
+# This is your actual application image.
+FROM python:3.9-slim
+
 WORKDIR /app
 
-# Copy the requirements file first to leverage Docker's caching mechanism.
+# Copy the requirements file and install dependencies
 COPY requirements.txt .
-
-# Install the Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of your application code into the container
+# Copy the downloaded model files from the 'downloader' stage
+COPY --from=downloader /downloads/ .
+
+# Copy the rest of your application code
 COPY . .
 
-# Expose the port that Gunicorn will run on
-EXPOSE 8000
+# Expose the port your app runs on
+EXPOSE 5000
 
-# This runs gunicorn as a Python module, which is the most robust method.
-CMD ["python", "-m", "gunicorn", "--workers=1", "--bind", "0.0.0.0:8000", "app:app"]
+# The command to run the application
+# Note: We match the port in the README.md (5000)
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
