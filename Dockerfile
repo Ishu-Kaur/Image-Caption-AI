@@ -1,6 +1,6 @@
 # Stage 1: Downloader
 # This stage uses a basic image with 'wget' to download our large model files.
-FROM debian:buster-slim AS downloader
+FROM debian:bullseye-slim AS downloader
 RUN apt-get update && apt-get install -y wget && rm -rf /var/lib/apt/lists/*
 WORKDIR /downloads
 RUN wget -O decoder-model.pth "https://github.com/Ishu-Kaur/Image-Caption-AI/releases/download/v2.0.2/decoder-model.pth"
